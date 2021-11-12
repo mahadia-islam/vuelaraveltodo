@@ -91,7 +91,8 @@ class TodoController extends Controller
             $existingTodo->completed = 1;
             $existingTodo->completed_at = Carbon::now();
             $existingTodo->save();
-            return $existingTodo;
+            $todos = Todo::orderBy('created_at', 'DESC')->where('completed', 0)->get();
+            return $todos;
 
         }else{
             return "Todo was not found";
@@ -109,7 +110,8 @@ class TodoController extends Controller
         $todo = Todo::find($id);
         if($todo){
             $todo->delete();
-            return 'Todo was deleted';
+            $newTodo = Todo::orderBy('created_at', 'DESC')->where('completed', 0)->get();
+            return $newTodo;
         }
         return 'Todo was not found';
     }

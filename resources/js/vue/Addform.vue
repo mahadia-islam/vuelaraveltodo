@@ -1,7 +1,7 @@
 <template>
     <div>
         <form class="form-inline" @submit.prevent="addTodo()">
-            <input v-model="todos.title" type="text" placeholder="Write title">
+            <input @click="vanishMessage()" v-model="todos.title" type="text" placeholder="Write title">
             <button type="submit">submit</button>
         </form>
         <div v-if="message.danger" class="alert alert-danger">{{message.danger}}</div>
@@ -14,6 +14,7 @@
 import axios from 'axios';
 
 export default {
+    props:['getTodos'],
     data:function(){
         return {
             todos:{
@@ -35,8 +36,13 @@ export default {
             .then(data => {
                 this.message.success = data.data.message;
                 this.todos.title = '';
+                this.getTodos();
             })
             .catch(error => {this.message.danger = err.message});
+        },
+        vanishMessage:function(){
+            this.message.success = '';
+            this.message.danger = '';
         }
     }
 }

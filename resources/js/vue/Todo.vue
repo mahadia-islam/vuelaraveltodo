@@ -1,16 +1,20 @@
 <template>
     <div class="todolist">
-        <ul>
-            <todo-item name="Be rich"></todo-item>
-            <todo-item name="Be Actress"></todo-item>
-            <todo-item name="Good Dancer"></todo-item>
+        <ul v-for="todo in todos" :key="todo.title">
+            <todo-item :deleteHandler="deleteTodo" :clickHandler="updateTodo" :id="todo.id" :name="todo.title"></todo-item>
         </ul>
     </div>
 </template>
 <script>
 import TodoItem from './TodoItem.vue';
 export default {
-    components:{TodoItem}
+    components:{TodoItem},
+    props:['todos','updateTodo','deleteTodo'],
+    data:function(){
+        return {
+            todos:this.newTodos
+        }
+    }
 }
 </script>
 

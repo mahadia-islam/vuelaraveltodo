@@ -2,14 +2,14 @@
         <li>
             <span>{{name}}</span>
             <div class="icons">
-                <i class='bx bx-check'></i>
-                <i class='bx bxs-trash'></i>
+                <i @click="clickHandler(id)" class='bx bx-check'></i>
+                <i @click="deleteHandler(id)" class='bx bxs-trash'></i>
             </div>
         </li>
 </template>
 <script>
 export default {
-    props:['name']
+    props:['name','clickHandler','deleteHandler','id']
 }
 </script>
 <style scoped>

@@ -4,8 +4,8 @@
             <div class="heading">
                 <h2 class="title">Todo List</h2>
             </div>
-            <addform></addform>
-            <todo></todo>
+            <addform :getTodos="getTodos"></addform>
+            <todo :todos="todos" :updateTodo="updateTodo" :deleteTodo="deleteTodo"></todo>
         </div>
     </section>
 </template>
@@ -14,9 +14,37 @@
 
 import Addform from './Addform.vue';
 import Todo from './Todo.vue';
+import axios from 'axios';
 
 export default {
-    components:{Addform,Todo}
+    components:{Addform,Todo},
+    data:function(){
+        return {
+            todos:[]
+        }
+    },
+    methods:{
+        getTodos:function(){
+            axios.get('/api/todos')
+            .then(data => {
+                this.todos = [...data.data];
+            })
+            .catch(error => console.log(error));
+        },
+        updateTodo:function(id){
+            axios.put(`/api/todo/${id}`)
+            .then(data => this.todos = [...data.data])
+            .catch(err => console.log(err))
+        },
+        deleteTodo:function(id){
+            axios.delete(`/api/todo/${id}`)
+            .then(data => this.todos = [...data.data])
+            .catch(err => console.log(err))
+        }
+    },
+    created:function(){
+        this.getTodos();
+    }
 }
 </script>
 <style lang="css" scoped>

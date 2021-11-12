@@ -2080,6 +2080,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['getTodos'],
   data: function data() {
     return {
       todos: {
@@ -2105,9 +2106,15 @@ __webpack_require__.r(__webpack_exports__);
       axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/todo/store', this.todos).then(function (data) {
         _this.message.success = data.data.message;
         _this.todos.title = '';
+
+        _this.getTodos();
       })["catch"](function (error) {
         _this.message.danger = err.message;
       });
+    },
+    vanishMessage: function vanishMessage() {
+      this.message.success = '';
+      this.message.danger = '';
     }
   }
 });
@@ -2127,6 +2134,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Addform_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Addform.vue */ "./resources/js/vue/Addform.vue");
 /* harmony import */ var _Todo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Todo.vue */ "./resources/js/vue/Todo.vue");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -2139,12 +2160,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     Addform: _Addform_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Todo: _Todo_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      todos: []
+    };
+  },
+  methods: {
+    getTodos: function getTodos() {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_2___default().get('/api/todos').then(function (data) {
+        _this.todos = _toConsumableArray(data.data);
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
+    updateTodo: function updateTodo(id) {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_2___default().put("/api/todo/".concat(id)).then(function (data) {
+        return _this2.todos = _toConsumableArray(data.data);
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    deleteTodo: function deleteTodo(id) {
+      var _this3 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_2___default()["delete"]("/api/todo/".concat(id)).then(function (data) {
+        return _this3.todos = _toConsumableArray(data.data);
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    }
+  },
+  created: function created() {
+    this.getTodos();
   }
 });
 
@@ -2169,12 +2228,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     TodoItem: _TodoItem_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  props: ['todos', 'updateTodo', 'deleteTodo'],
+  data: function data() {
+    return {
+      todos: this.newTodos
+    };
   }
 });
 
@@ -2201,7 +2264,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['name']
+  props: ['name', 'clickHandler', 'deleteHandler', 'id']
 });
 
 /***/ }),
@@ -20603,6 +20666,9 @@ var render = function () {
           attrs: { type: "text", placeholder: "Write title" },
           domProps: { value: _vm.todos.title },
           on: {
+            click: function ($event) {
+              return _vm.vanishMessage()
+            },
             input: function ($event) {
               if ($event.target.composing) {
                 return
@@ -20656,7 +20722,19 @@ var render = function () {
     _c(
       "div",
       { staticClass: "container" },
-      [_vm._m(0), _vm._v(" "), _c("addform"), _vm._v(" "), _c("todo")],
+      [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("addform", { attrs: { getTodos: _vm.getTodos } }),
+        _vm._v(" "),
+        _c("todo", {
+          attrs: {
+            todos: _vm.todos,
+            updateTodo: _vm.updateTodo,
+            deleteTodo: _vm.deleteTodo,
+          },
+        }),
+      ],
       1
     ),
   ])
@@ -20693,19 +20771,28 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "todolist" }, [
-    _c(
-      "ul",
-      [
-        _c("todo-item", { attrs: { name: "Be rich" } }),
-        _vm._v(" "),
-        _c("todo-item", { attrs: { name: "Be Actress" } }),
-        _vm._v(" "),
-        _c("todo-item", { attrs: { name: "Good Dancer" } }),
-      ],
-      1
-    ),
-  ])
+  return _c(
+    "div",
+    { staticClass: "todolist" },
+    _vm._l(_vm.todos, function (todo) {
+      return _c(
+        "ul",
+        { key: todo.title },
+        [
+          _c("todo-item", {
+            attrs: {
+              deleteHandler: _vm.deleteTodo,
+              clickHandler: _vm.updateTodo,
+              id: todo.id,
+              name: todo.title,
+            },
+          }),
+        ],
+        1
+      )
+    }),
+    0
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -20733,21 +20820,28 @@ var render = function () {
   return _c("li", [
     _c("span", [_vm._v(_vm._s(_vm.name))]),
     _vm._v(" "),
-    _vm._m(0),
+    _c("div", { staticClass: "icons" }, [
+      _c("i", {
+        staticClass: "bx bx-check",
+        on: {
+          click: function ($event) {
+            return _vm.clickHandler(_vm.id)
+          },
+        },
+      }),
+      _vm._v(" "),
+      _c("i", {
+        staticClass: "bx bxs-trash",
+        on: {
+          click: function ($event) {
+            return _vm.deleteHandler(_vm.id)
+          },
+        },
+      }),
+    ]),
   ])
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "icons" }, [
-      _c("i", { staticClass: "bx bx-check" }),
-      _vm._v(" "),
-      _c("i", { staticClass: "bx bxs-trash" }),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
