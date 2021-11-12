@@ -19,10 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/todoa',[TodoController::class,'index']);
+Route::get('/todos',[TodoController::class,'index']);
 Route::prefix('/todo')->group(function(){
     Route::post('/store',[TodoController::class,'store']);
-    Route::get('/edit',[TodoController::class,'edit']);
-    Route::put('/store',[TodoController::class,'update']);
-    Route::delete('/store',[TodoController::class,'destroy']);
+    Route::put('/{id}',[TodoController::class,'update']);
+    Route::delete('/{id}',[TodoController::class,'destroy']);
 });

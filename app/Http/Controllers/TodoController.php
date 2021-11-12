@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Todo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TodoController extends Controller
@@ -14,7 +15,7 @@ class TodoController extends Controller
      */
     public function index()
     {
-        $todos = Todo::all();
+        $todos = Todo::orderBy('created_at','DESC')->where('completed',0)->get();
         return $todos;
     }
 
@@ -36,12 +37,14 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        $todo = [
-            "title" => "Todo 1",
-            "detail" => "this is todo 1"
+        $todo = new Todo;
+        $todo->title = $request->title;
+        $todo->save();
+        $data = [
+            $todo,
+            'message' => "todo inserted successfully"
         ];
-
-        Todo::create($todo);
+        return $data;
     }
 
     /**
@@ -63,7 +66,14 @@ class TodoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $todo = Todo::find($id);
+        if($todo){
+            return $todo;
+        }else{
+            return [
+                "message" => "todo was not found"
+            ];
+        }
     }
 
     /**
@@ -73,9 +83,19 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id)
     {
-        //
+        $existingTodo = Todo::find($id);
+        if($existingTodo){
+
+            $existingTodo->completed = 1;
+            $existingTodo->completed_at = Carbon::now();
+            $existingTodo->save();
+            return $existingTodo;
+
+        }else{
+            return "Todo was not found";
+        }
     }
 
     /**
@@ -86,6 +106,11 @@ class TodoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $todo = Todo::find($id);
+        if($todo){
+            $todo->delete();
+            return 'Todo was deleted';
+        }
+        return 'Todo was not found';
     }
 }
